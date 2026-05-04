@@ -29,13 +29,13 @@ export function Shell({ children, sidebar, dock }: ShellProps) {
           )}
           <div className="p-4 text-xs" style={{ color: "var(--muted)" }}>
             <a
-              href="https://freeappstore.online"
+              href="https://freegamestore.online"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline"
               style={{ color: "var(--muted)" }}
             >
-              Part of FreeAppStore — free forever
+              Part of FreeGameStore — free forever
             </a>
           </div>
         </aside>
