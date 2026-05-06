@@ -16,5 +16,7 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "orientation": "landscape",
+  "min_viewport_width": 600
 }
