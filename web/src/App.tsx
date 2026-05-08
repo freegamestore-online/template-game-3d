@@ -1,9 +1,9 @@
-import { Shell } from "./components/Shell";
+import { GameShell, GameTopbar } from "@freegamestore/games";
 import { Scene } from "./components/Scene";
 
 export default function App() {
   return (
-    <Shell>
+    <GameShell topbar={<GameTopbar title="APPNAME" score={0} />}><div className="flex flex-col items-center justify-center h-full gap-4">
       <div className="relative w-full h-full min-h-[400px]">
         <Scene>
           {/* Add your 3D game objects here */}
@@ -17,6 +17,6 @@ export default function App() {
           </mesh>
         </Scene>
       </div>
-    </Shell>
+    </div></GameShell>
   );
 }
