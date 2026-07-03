@@ -109,7 +109,12 @@ function FollowCamera({ posRef }: { posRef: React.RefObject<THREE.Vector3> }) {
 function Scene({ onScore, onTime, onGameOver }: GameProps) {
   const posRef = useRef(new THREE.Vector3(0, 0.6, 0));
   const keys = useRef<Set<Dir>>(new Set());
-  const [orbs, setOrbs] = useState<Orb[]>(() => initialOrbs());
+  const [orbs, setOrbs] = useState<Orb[]>(initialOrbs);
+  // Orbs also live in a ref. The collision scan runs in useFrame and mutates
+  // this in place the instant an orb is collected, so a slow-moving player still
+  // overlapping the old position on the NEXT frame can't collect the same orb
+  // again before React commits the setOrbs re-render (which would double-count).
+  const orbsRef = useRef<Orb[]>(orbs);
 
   const scoreRef = useRef(0);
   const timeRef = useRef(ROUND_SECONDS);
@@ -169,25 +174,25 @@ function Scene({ onScore, onTime, onGameOver }: GameProps) {
       p.z = nz;
     }
 
-    // Collect orbs — respawn each collected orb elsewhere.
+    // Collect orbs — respawn each collected orb elsewhere. Mutate the ref in
+    // place so the next frame sees the new position immediately; only touch
+    // React state (for rendering) when something actually changed.
     const p = posRef.current;
+    const list = orbsRef.current;
     let collected = 0;
-    let changed = false;
-    const next = orbs.map((o) => {
-      if (collides(p.x, p.z, o.x, o.z)) {
+    for (let i = 0; i < list.length; i++) {
+      if (collides(p.x, p.z, list[i]!.x, list[i]!.z)) {
         collected++;
-        changed = true;
         const [x, z] = randomOrbPosition(p.x, p.z);
-        return { id: nextOrbId.current++, x, z };
+        list[i] = { id: nextOrbId.current++, x, z };
       }
-      return o;
-    });
+    }
     if (collected > 0) {
       scoreRef.current += collected;
       cbs.current.onScore(scoreRef.current);
       soundsRef.current.playScore();
+      setOrbs([...list]);
     }
-    if (changed) setOrbs(next);
   });
 
   return (
@@ -216,6 +221,7 @@ function DpadButton({ dir, label }: { dir: Dir; label: string }) {
     <button
       onPointerDown={(e) => { e.preventDefault(); press(dir, "keydown"); }}
       onPointerUp={(e) => { e.preventDefault(); press(dir, "keyup"); }}
+      onPointerCancel={() => press(dir, "keyup")}
       onPointerLeave={() => press(dir, "keyup")}
       className="select-none pointer-events-auto flex items-center justify-center"
       style={{
@@ -232,6 +238,12 @@ function DpadButton({ dir, label }: { dir: Dir; label: string }) {
 }
 
 function MobileControls() {
+  // If we unmount mid-press (e.g. a resize crosses the mobile breakpoint while
+  // a button is held), release every direction so a key can't stick down and
+  // send the player drifting forever.
+  useEffect(() => () => {
+    (["left", "right", "up", "down"] as Dir[]).forEach((d) => press(d, "keyup"));
+  }, []);
   return (
     <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none" style={{ zIndex: 10 }}>
       <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(3, 56px)", gridTemplateRows: "repeat(2, 56px)" }}>
