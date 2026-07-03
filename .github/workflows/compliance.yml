@@ -69,7 +69,10 @@ jobs:
           grep -qi "apple-mobile-web-app-capable\|mobile-web-app-capable" web/index.html
 
       - name: FreeGameStore link
-        run: grep -r "freegamestore.online" web/src/ | grep -q .
+        # The attribution link is provided by the SDK's GameShell, so it lands
+        # in the built bundle rather than in web/src (which greps false-negative
+        # the moment a game relies on the shell instead of hand-rolling a link).
+        run: grep -rq "freegamestore.online" web/dist/
 
       - name: Dark mode
         run: grep -rE "prefers-color-scheme|data-theme|color-scheme" web/src/ | grep -q .
