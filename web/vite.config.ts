@@ -52,8 +52,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          three: ["three", "@react-three/fiber", "@react-three/drei"],
+        advancedChunks: {
+          groups: [{ name: "three", test: /node_modules[\\/](three|@react-three)/ }],
         },
       },
     },
