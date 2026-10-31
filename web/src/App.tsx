@@ -50,20 +50,19 @@ export default function App() {
         )}
 
         {phase === "menu" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-5 px-6" style={{ background: "#0f172a" }}>
-            <h1 className="text-3xl font-bold" style={{ color: "#f8fafc" }}>APPNAME</h1>
-            <p className="max-w-sm" style={{ color: "#94a3b8" }}>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-5 px-6 bg-slate-900">
+            <h1 className="text-3xl font-bold text-slate-50">APPNAME</h1>
+            <p className="max-w-sm text-slate-400">
               Move with <b>WASD / arrow keys</b> (or the on-screen pad on mobile).
               Grab as many orbs as you can before the clock runs out.
             </p>
             <button
               onClick={start}
-              className="font-semibold rounded-xl"
-              style={{ minHeight: 48, padding: "0 2rem", background: "#22d3ee", color: "#083344", border: "none", cursor: "pointer", fontSize: "1.05rem" }}
+              className="min-h-12 cursor-pointer rounded-xl border-0 bg-cyan-400 px-8 text-[1.05rem] font-semibold text-cyan-950"
             >
               Play
             </button>
-            {highScore > 0 && <p className="text-sm" style={{ color: "#64748b" }}>Best: {highScore}</p>}
+            {highScore > 0 && <p className="text-sm text-slate-500">Best: {highScore}</p>}
           </div>
         )}
 

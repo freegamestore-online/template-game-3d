@@ -223,13 +223,7 @@ function DpadButton({ dir, label }: { dir: Dir; label: string }) {
       onPointerUp={(e) => { e.preventDefault(); press(dir, "keyup"); }}
       onPointerCancel={() => press(dir, "keyup")}
       onPointerLeave={() => press(dir, "keyup")}
-      className="select-none pointer-events-auto flex items-center justify-center"
-      style={{
-        width: 56, height: 56, borderRadius: "0.9rem",
-        background: "rgba(255,255,255,0.14)", backdropFilter: "blur(4px)",
-        border: "1px solid rgba(255,255,255,0.2)", color: "#fff", fontSize: 22,
-        touchAction: "none",
-      }}
+      className="pointer-events-auto flex h-14 w-14 touch-none select-none items-center justify-center rounded-[0.9rem] border border-white/20 bg-white/[0.14] text-[22px] text-white backdrop-blur-xs"
       aria-label={`Move ${dir}`}
     >
       {label}
@@ -245,8 +239,8 @@ function MobileControls() {
     (["left", "right", "up", "down"] as Dir[]).forEach((d) => press(d, "keyup"));
   }, []);
   return (
-    <div className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none" style={{ zIndex: 10 }}>
-      <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(3, 56px)", gridTemplateRows: "repeat(2, 56px)" }}>
+    <div className="absolute bottom-4 left-0 right-0 z-10 flex justify-center pointer-events-none">
+      <div className="grid gap-1 grid-cols-[repeat(3,56px)] grid-rows-[repeat(2,56px)]">
         <span />
         <DpadButton dir="up" label="&#9650;" />
         <span />
@@ -269,7 +263,7 @@ export function Game(props: GameProps) {
 
   return (
     <div className="relative w-full h-full">
-      <Canvas shadows camera={{ position: [0, 15, 16], fov: 55, near: 0.1, far: 200 }} style={{ width: "100%", height: "100%" }}>
+      <Canvas shadows camera={{ position: [0, 15, 16], fov: 55, near: 0.1, far: 200 }} className="h-full w-full">
         <Scene {...props} />
       </Canvas>
       {isMobile && <MobileControls />}
